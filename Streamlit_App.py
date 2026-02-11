@@ -22,13 +22,22 @@ model_option = st.selectbox(
 uploaded_file = st.file_uploader("Upload Test CSV File", type="csv")
 
 if uploaded_file:
-    df = pd.read_csv(uploaded_file, sep=";")
+    #df = pd.read_csv(uploaded_file, sep=";")
+    df = pd.read_csv(uploaded_file)
+    df.columns = df.columns.str.strip()
+
+    st.write("Columns:", df.columns)
+
+    target_column = st.selectbox("Select Target Column", df.columns)
+
+    X = df.drop(target_column, axis=1)
+    y = df[target_column]
+    
 
     model_path = f"models/{model_option.lower().replace(' ', '_')}.pkl"
     model = joblib.load(model_path)
 
-    X = df.drop("income", axis=1)
-    y = df["income"]
+    
 
     preds = model.predict(X)
 
